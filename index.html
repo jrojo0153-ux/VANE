@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vane: Función Especial 🎬</title>
+    <title>Vane: The Final Reveal 🎬</title>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Special+Elite&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -20,166 +20,164 @@
             justify-content: center; align-items: center; text-align: center;
         }
 
-        /* ESTILO BOTONES TEATRO */
-        .theatre-btn {
-            padding: 20px 40px; font-size: 1.5rem; background: var(--vane-red);
-            border: 3px solid white; color: white; border-radius: 10px;
-            cursor: pointer; font-family: 'Anton'; box-shadow: 0 0 20px var(--vane-red);
-            transition: 0.3s; margin: 10px; z-index: 500;
-        }
-        .theatre-btn:hover { transform: scale(1.1); background: var(--vane-pink); }
-
-        /* INSTRUCCIONES TIPO MÁQUINA DE ESCRIBIR */
-        #instructions {
-            font-family: 'Special Elite', cursive; font-size: 1.8rem;
-            color: var(--vane-pink); display: none; z-index: 400;
+        /* BOTONES CLICHÉ */
+        .cliche-btn {
+            padding: 15px 30px; font-size: 1.2rem; background: var(--vane-red);
+            border: 2px solid white; color: white; border-radius: 50px;
+            cursor: pointer; position: absolute; display: none; z-index: 1000;
+            box-shadow: 0 0 20px var(--vane-red); transition: 0.2s;
         }
 
-        /* CAPA DE CÁMARA (VIDEO) */
-        #camera-viewport {
-            display: none; width: 100%; height: 100%;
-            flex-direction: column; justify-content: center; align-items: center;
-            animation: cameraShake 10s infinite ease-in-out;
-        }
+        /* INSTRUCCIONES INICIALES */
+        #instructions { font-family: 'Special Elite', cursive; font-size: 1.8rem; color: var(--vane-pink); z-index: 400; }
 
-        @keyframes cameraShake {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02) rotate(0.5deg); }
-        }
+        /* ESCENA PRINCIPAL */
+        #camera-viewport { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; align-items: center; }
 
-        /* PIXAR INTRO */
-        #pixar-intro { display: flex; gap: 15px; font-size: 6rem; position: relative; }
-        .letter { display: inline-block; opacity: 0; transform: scale(0); transition: 0.5s; }
-        #pixar-cat { position: absolute; font-size: 5rem; display: none; z-index: 101; transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.5); }
-
-        /* FRASES ESQUINAS */
+        /* FRASES ESQUINAS (UNA POR UNA) */
         .dynamic-phrase {
-            position: absolute; padding: 15px; font-size: 1.2rem;
+            position: absolute; padding: 15px; font-size: 1.3rem;
             background: rgba(255,0,0,0.4); border-radius: 10px;
-            opacity: 0; filter: blur(10px); transition: 0.8s; z-index: 50;
+            opacity: 0; transition: 1s; z-index: 50;
         }
-        .active-phrase { opacity: 1; filter: blur(0); transform: scale(1); }
 
-        /* LLUVIA */
+        /* REVELACIÓN FINAL DE EMOJIS */
+        #emoji-reveal { font-size: 120px; display: none; flex-direction: column; align-items: center; z-index: 1001; }
+        #emoji-subtext { font-size: 1.5rem; color: #ffd700; margin-top: 10px; }
+
+        /* PARTÍCULAS */
         .particle { position: absolute; top: -50px; pointer-events: none; animation: fall linear forwards; }
         @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
-
-        #final-msg { font-size: 1.6rem; color: #ffd700; max-width: 85%; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <div id="stage-1">
-        <button class="theatre-btn" onclick="nextStep(2)">HOLA VANE, DA CLICK AQUÍ 🎬</button>
-    </div>
-    <div id="stage-2" style="display:none;">
-        <button class="theatre-btn" onclick="nextStep(3)">¡NO! MEJOR AQUÍ 👇</button>
-    </div>
-    <div id="stage-3" style="display:none;">
-        <button class="theatre-btn" onclick="nextStep(4)">ESTE ES EL BUENO, AQUÍ 💎</button>
+    <div id="intro-buttons">
+        <button class="cliche-btn" id="start-btn" style="display:block; position:relative;" onclick="nextStep(1)">HOLA VANE, DA CLICK AQUÍ 🎬</button>
+        <button class="cliche-btn" id="btn-step-2" onclick="nextStep(2)">¡NO! MEJOR AQUÍ 👇</button>
+        <button class="cliche-btn" id="btn-step-3" onclick="nextStep(3)">ESTE ES EL BUENO, AQUÍ 💎</button>
     </div>
 
     <div id="instructions"></div>
 
     <div id="camera-viewport">
-        <div id="pixar-intro">
-            <div id="pixar-cat">🐱</div>
-            <span class="letter">V</span><span class="letter">A</span><span class="letter">N</span><span class="letter">E</span>
+        <div id="pixar-intro" style="font-size: 6rem; display: flex; gap: 15px;">
+            <div id="pixar-cat" style="position:absolute; display:none;">🐱</div>
+            <span class="letter" style="opacity:0;">V</span>
+            <span class="letter" style="opacity:0;">A</span>
+            <span class="letter" style="opacity:0;">N</span>
+            <span class="letter" style="opacity:0;">E</span>
         </div>
 
         <div id="main-show" style="display:none; flex-direction: column; align-items: center;">
-            <div style="font-size: 120px;">🫂🐱</div>
-            <h1 style="font-size: 4.5rem; margin: 10px; background: linear-gradient(to right, red, pink); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">VANE</h1>
-            <p id="final-msg"></p>
+            <div style="font-size: 100px;">🫂🐱</div>
+            <h1 style="font-size: 4rem; background: linear-gradient(to right, red, pink); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">VANE</h1>
         </div>
 
         <div class="dynamic-phrase" style="top: 10%; right: 5%;" id="f1">ADMIRO TU DISCIPLINA 💪</div>
         <div class="dynamic-phrase" style="bottom: 15%; left: 5%;" id="f2">NADIE CHAMBEA COMO TÚ 🔥</div>
         <div class="dynamic-phrase" style="top: 30%; left: 10%;" id="f3">REINA DE LOS TATTOOS 💉</div>
-        <div class="dynamic-phrase" style="bottom: 5%; right: 10%;" id="f4">UÑAS DE IMPACTO 💅✨</div>
+        <div class="dynamic-phrase" style="bottom: 10%; right: 10%;" id="f4">UÑAS DE IMPACTO 💅✨</div>
+    </div>
+
+    <button class="cliche-btn" id="cliche-1" style="top:50%; left:50%; transform:translate(-50%, -50%);" onclick="clicheChase(2)">¿Quieres saber quién soy? (Cliché) AQUÍ</button>
+    <button class="cliche-btn" id="cliche-2" style="top:20%; left:10%;" onclick="clicheChase(3)">¡NO! MEJOR AQUÍ</button>
+    <button class="cliche-btn" id="cliche-3" style="top:70%; right:15%;" onclick="finalReveal()">¡AQUÍ POR FIN!</button>
+
+    <div id="emoji-reveal">
+        <div id="big-emoji"></div>
+        <div id="emoji-subtext"></div>
     </div>
 
     <script>
-        const inst = ["¡SILENCIO EN LA SALA!", "APAGA LAS LUCES...", "PREPARA TUS OJOS...", "¡QUE COMIENCE LA FUNCIÓN!"];
-        const finalTxt = "TU DISCIPLINA MARCA EL CUERPO, TU ARTE MARCA LA PIEL. ¡ERES LEYENDA! 💪💉🔥";
-
-        function nextStep(step) {
-            document.getElementById(`stage-${step-1}`).style.display = 'none';
-            if (step <= 3) {
-                document.getElementById(`stage-${step}`).style.display = 'block';
-            } else {
-                startInstructions();
-            }
+        // Lógica de inicio (Botones teatro)
+        function nextStep(s) {
+            if(s==1) { document.getElementById('start-btn').style.display='none'; document.getElementById('btn-step-2').style.display='block'; }
+            if(s==2) { document.getElementById('btn-step-2').style.display='none'; document.getElementById('btn-step-3').style.display='block'; }
+            if(s==3) { document.getElementById('btn-step-3').style.display='none'; runInstructions(); }
         }
 
-        function startInstructions() {
-            const instDiv = document.getElementById('instructions');
-            instDiv.style.display = 'block';
+        function runInstructions() {
+            const inst = ["¡SILENCIO EN LA SALA!", "APAGA LAS LUCES...", "QUE COMIENCE LA FUNCIÓN..."];
+            const div = document.getElementById('instructions');
             let i = 0;
-            
-            const interval = setInterval(() => {
-                if (i < inst.length) {
-                    instDiv.innerHTML = inst[i];
-                    i++;
-                } else {
-                    clearInterval(interval);
-                    instDiv.style.display = 'none';
-                    startMovie();
-                }
-            }, 1800);
+            const timer = setInterval(() => {
+                if(i < inst.length) { div.innerHTML = inst[i]; i++; }
+                else { clearInterval(timer); div.style.display='none'; startPixar(); }
+            }, 1500);
         }
 
-        function startMovie() {
-            document.getElementById('camera-viewport').style.display = 'flex';
-            const cat = document.getElementById('pixar-cat');
+        function startPixar() {
+            document.getElementById('camera-viewport').style.display='flex';
             const letters = document.querySelectorAll('.letter');
-            cat.style.display = 'block';
-
+            const cat = document.getElementById('pixar-cat');
+            cat.style.display='block';
             letters.forEach((l, i) => {
                 setTimeout(() => {
                     const rect = l.getBoundingClientRect();
                     cat.style.left = (rect.left - 10) + 'px';
                     cat.style.top = (rect.top - 100) + 'px';
-                    setTimeout(() => {
-                        l.style.opacity = '1';
-                        l.style.transform = 'scale(1)';
-                        cat.style.top = (rect.top - 50) + 'px';
-                    }, 300);
+                    setTimeout(() => { l.style.opacity='1'; cat.style.top=(rect.top-50)+'px'; }, 300);
                 }, i * 800);
             });
-
-            setTimeout(showShow, letters.length * 900);
+            setTimeout(mainShow, 4000);
         }
 
-        function showShow() {
-            document.getElementById('pixar-intro').style.display = 'none';
-            document.getElementById('main-show').style.display = 'flex';
+        function mainShow() {
+            document.getElementById('pixar-intro').style.display='none';
+            document.getElementById('main-show').style.display='flex';
             setInterval(createParticle, 100);
 
-            // Frases
-            ['f1', 'f2', 'f3', 'f4'].forEach((id, i) => {
+            // Frases una por una
+            [1, 2, 3, 4].forEach(n => {
                 setTimeout(() => {
-                    document.getElementById(id).classList.add('active-phrase');
-                    setTimeout(() => document.getElementById(id).style.opacity = '0', 3000);
-                }, i * 2000);
+                    const f = document.getElementById('f'+n);
+                    f.style.opacity = '1';
+                    setTimeout(() => f.style.opacity = '0', 2500);
+                }, n * 3000);
             });
 
-            // Mensaje final
+            // Al final de las frases, el botón cliché
             setTimeout(() => {
-                let j = 0;
-                const timer = setInterval(() => {
-                    if (j < finalTxt.length) {
-                        document.getElementById('final-msg').innerHTML += finalTxt.charAt(j);
-                        j++;
-                    } else { clearInterval(timer); }
-                }, 70);
-            }, 8000);
+                document.getElementById('main-show').style.display='none';
+                document.getElementById('cliche-1').style.display='block';
+            }, 16000);
+        }
+
+        // Lógica de persecución final
+        function clicheChase(step) {
+            document.getElementById('cliche-'+(step-1)).style.display = 'none';
+            document.getElementById('cliche-'+step).style.display = 'block';
+        }
+
+        function finalReveal() {
+            document.getElementById('cliche-3').style.display = 'none';
+            const reveal = document.getElementById('emoji-reveal');
+            const bigE = document.getElementById('big-emoji');
+            const sub = document.getElementById('emoji-subtext');
+            reveal.style.display = 'flex';
+
+            const sequence = [
+                { e: '🙉', t: '' },
+                { e: '🙈', t: '' },
+                { e: '🐆', t: 'ESE NO...' },
+                { e: '🐈', t: 'ESTE.' }
+            ];
+
+            let i = 0;
+            const timer = setInterval(() => {
+                if(i < sequence.length) {
+                    bigE.innerHTML = sequence[i].e;
+                    sub.innerHTML = sequence[i].t;
+                    i++;
+                } else { clearInterval(timer); }
+            }, 1800);
         }
 
         function createParticle() {
             const p = document.createElement('div');
             p.className = 'particle';
-            const items = ['🏋️‍♀️', '💉', '💅', '🔥', '✨', '💖', '👟', '🎊', '🎈'];
+            const items = ['🏋️‍♀️', '💉', '💅', '🔥', '✨', '💖', '🎊', '👟'];
             p.innerHTML = items[Math.floor(Math.random() * items.length)];
             p.style.left = Math.random() * 100 + 'vw';
             p.style.fontSize = (Math.random() * 25 + 15) + 'px';
