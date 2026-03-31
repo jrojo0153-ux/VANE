@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para ti</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* Carpeta/Sobre */
+        .folder {
+            width: 150px;
+            height: 110px;
+            background-color: #ffd43b;
+            border-radius: 0 10px 10px 10px;
+            position: relative;
+            transition: transform 0.5s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .folder::before {
+            content: '';
+            width: 50px;
+            height: 15px;
+            background-color: #ffd43b;
+            position: absolute;
+            top: -15px;
+            left: 0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        /* El mensaje oculto */
+        .message {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            transform: translateY(0);
+            transition: transform 0.6s ease;
+            z-index: -1;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .message h2 {
+            margin: 0;
+            color: #ff4757;
+            font-size: 1.2rem;
+        }
+
+        /* Animación al hacer clic */
+        .container.open .folder {
+            transform: translateY(100px) rotateX(20deg);
+            opacity: 0.8;
+        }
+
+        .container.open .message {
+            transform: translateY(-120px);
+            z-index: 2;
+        }
+
+        .instruction {
+            position: absolute;
+            bottom: -40px;
+            width: 100%;
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" onclick="openFolder(this)">
+    <div class="message">
+        <h2>Te extraño</h2>
+        <p>❤️</p>
+    </div>
+    <div class="folder"></div>
+    <div class="instruction">Toca para abrir</div>
+</div>
+
+<script>
+    function openFolder(element) {
+        element.classList.toggle('open');
+    }
+</script>
+
+</body>
+</html>
