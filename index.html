@@ -2,106 +2,214 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para ti</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para Vane</title>
     <style>
-        body {
+        :root {
+            --bg-color: #050509;
+            --neon-color: #ff2d75;
+            --text-color: #fff;
+            --folder-color: #ffd700;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #f0f2f5;
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            font-family: 'Poppins', sans-serif;
             overflow: hidden;
+            perspective: 1000px; /* Necesario para el efecto 3D */
         }
 
-        .container {
+        /* Estilo del Nombre VANE - Neón */
+        .vane-header {
+            position: absolute;
+            top: 20px;
+            text-align: center;
+            width: 100%;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color), 0 0 40px var(--neon-color);
+            animation: flicker 1.5s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color); }
+            50% { opacity: 0.8; text-shadow: 0 0 5px var(--neon-color); }
+            80% { opacity: 1; }
+        }
+
+        /* Contenedor Principal (Caja Mágica) */
+        .box-container {
+            width: 250px;
+            height: 200px;
             position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
         }
 
-        /* Carpeta/Sobre */
-        .folder {
-            width: 150px;
-            height: 110px;
-            background-color: #ffd43b;
-            border-radius: 0 10px 10px 10px;
-            position: relative;
-            transition: transform 0.5s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        .folder::before {
-            content: '';
-            width: 50px;
-            height: 15px;
-            background-color: #ffd43b;
-            position: absolute;
-            top: -15px;
-            left: 0;
-            border-radius: 10px 10px 0 0;
-        }
-
-        /* El mensaje oculto */
-        .message {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            transform: translateY(0);
-            transition: transform 0.6s ease;
-            z-index: -1;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        .message h2 {
-            margin: 0;
-            color: #ff4757;
-            font-size: 1.2rem;
-        }
-
-        /* Animación al hacer clic */
-        .container.open .folder {
-            transform: translateY(100px) rotateX(20deg);
-            opacity: 0.8;
-        }
-
-        .container.open .message {
-            transform: translateY(-120px);
-            z-index: 2;
-        }
-
-        .instruction {
-            position: absolute;
-            bottom: -40px;
+        /* La Tapa (Frontal) */
+        .box-lid {
             width: 100%;
-            text-align: center;
-            color: #888;
-            font-size: 0.9rem;
+            height: 100%;
+            background-color: var(--folder-color);
+            border-radius: 10px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+            z-index: 2;
+            backface-visibility: hidden;
+            transition: transform 0.8s, opacity 0.5s;
         }
+
+        .box-lid::after {
+            content: 'Toca aquí';
+            color: #333;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        /* El Contenido Oculto */
+        .box-content {
+            width: 90%;
+            height: 80%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            position: absolute;
+            top: 10%;
+            left: 5%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateZ(-50px);
+            transition: opacity 0.5s 0.3s, transform 0.8s 0.2s;
+            padding: 10px;
+            box-sizing: border-box;
+            backdrop-filter: blur(5px);
+        }
+
+        /* El Mensaje con efecto de escritura */
+        .final-message {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
+            border-right: 3px solid var(--neon-color);
+        }
+
+        .heart-icon {
+            color: var(--neon-color);
+            font-size: 2rem;
+            margin-top: 10px;
+            opacity: 0;
+            transform: scale(0);
+            transition: transform 0.5s 1s, opacity 0.5s 1s;
+        }
+
+        /* ESTADOS ABIERTOS */
+        .box-container.open .box-lid {
+            transform: rotateY(-180deg);
+            opacity: 0;
+        }
+
+        .box-container.open .box-content {
+            opacity: 1;
+            transform: translateZ(0px);
+        }
+
+        .box-container.open .final-message {
+            animation: typing 1.5s steps(12) forwards 0.8s;
+        }
+
+        .box-container.open .heart-icon {
+            opacity: 1;
+            transform: scale(1) rotate(15deg);
+        }
+
+        /* Animaciones */
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; border-color: transparent; }
+        }
+
+        /* Partículas de Fondo */
+        .particle {
+            position: absolute;
+            color: var(--neon-color);
+            font-size: 1rem;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .box-container.open ~ .particle {
+            animation: floatParticle 3s ease-out forwards;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-200px) translateX(20px) scale(0.5); opacity: 0; }
+        }
+
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div class="container" onclick="openFolder(this)">
-    <div class="message">
-        <h2>Te extraño</h2>
-        <p>❤️</p>
+    <div class="vane-header">Vane</div>
+
+    <div class="box-container" onclick="openMagicBox(this)">
+        <div class="box-content">
+            <h1 class="final-message">Te extraño</h1>
+            <div class="heart-icon">♥</div>
+        </div>
+        <div class="box-lid"></div>
     </div>
-    <div class="folder"></div>
-    <div class="instruction">Toca para abrir</div>
-</div>
 
-<script>
-    function openFolder(element) {
-        element.classList.toggle('open');
-    }
-</script>
+    <div id="particle-container"></div>
 
+    <script>
+        function openMagicBox(element) {
+            element.classList.add('open');
+            createParticles();
+        }
+
+        function createParticles() {
+            const container = document.getElementById('particle-container');
+            if (document.querySelector('.particle')) return; // Solo una vez
+
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.innerHTML = i % 2 === 0 ? '♥' : '✦'; // Alternar corazones y destellos
+                
+                // Posición aleatoria cerca de la caja
+                particle.style.left = (Math.random() * 80 + 10) + 'vw';
+                particle.style.top = (Math.random() * 50 + 30) + 'vh';
+                
+                // Retraso aleatorio para la animación
+                particle.style.animationDelay = (Math.random() * 1) + 's';
+                
+                container.appendChild(particle);
+            }
+        }
+    </script>
 </body>
 </html>
