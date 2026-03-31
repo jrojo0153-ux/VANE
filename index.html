@@ -27,69 +27,124 @@
             text-transform: uppercase; letter-spacing: 10px;
             filter: drop-shadow(0 0 20px rgba(255, 0, 85, 0.8));
             animation: pulse 1.5s infinite ease-in-out;
-            z-index: 20; margin-bottom: 50px;
+            z-index: 20; margin-bottom: 30px;
         }
 
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
+        /* Contenedor de Gatitos */
+        .cats-stage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            min-height: 150px;
+            z-index: 15;
+            transition: all 1s ease;
+        }
+
         /* Gatito Principal */
-        .cat-main { font-size: 100px; z-index: 15; filter: drop-shadow(0 0 10px white); }
+        .cat-main { font-size: 100px; filter: drop-shadow(0 0 10px white); transition: all 1s; }
         .bounce { animation: bounce 0.6s infinite alternate; }
         @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-30px); } }
 
-        /* Mensaje Central */
-        #main-message {
-            font-size: 2.2rem; min-height: 3rem; color: #fff;
-            text-shadow: 0 0 15px #ff69b4; font-weight: bold; z-index: 20;
-        }
-
-        /* EL GATITO TÍMIDO (Se asoma desde abajo) */
+        /* Gatito Tímido Asomadizo */
         .shy-cat-box {
-            position: absolute; bottom: -100px; /* Escondido */
+            position: absolute; bottom: -120px;
             width: 100%; transition: bottom 2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 30; display: none;
         }
+        .shy-cat-box.peek { bottom: 20px; }
+        #shy-cat { font-size: 80px; }
+        #angry-question { font-size: 1.5rem; color: #ffdae0; text-shadow: 0 0 5px #ff0000; font-weight: bold; }
 
-        .shy-cat-box.peek { bottom: 10px; /* Sale un poquito */ }
+        /* Escena del Abrazo */
+        .cats-hug {
+            font-size: 120px;
+            filter: drop-shadow(0 0 15px #ff69b4);
+            animation: fadeIn 1s forwards;
+            display: none;
+            z-index: 15;
+        }
 
-        #shy-cat { font-size: 80px; cursor: pointer; }
-        #question { font-size: 1.5rem; color: #ffdae0; text-shadow: 0 0 5px #ff0000; font-weight: bold; }
+        /* Mensajes */
+        #main-message {
+            font-size: 2.2rem; min-height: 3rem; color: #fff;
+            text-shadow: 0 0 15px #ff69b4; font-weight: bold; z-index: 20;
+            margin-top: 20px;
+        }
 
-        /* Partículas */
+        /* Pregunta Final "¿ME GUSTAS?" */
+        #final-like-question {
+            font-size: 2.8rem;
+            background: var(--vane-color);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            font-weight: 900;
+            margin-top: 20px;
+            display: none;
+            animation: finalPulse 2s infinite ease-in-out;
+            z-index: 20;
+        }
+        @keyframes finalPulse { 0%, 100% { transform: scale(1.1); } 50% { transform: scale(1.2); } }
+
+        /* Mensaje Pequeño y Tímido */
+        #shy-confession {
+            font-size: 0.9rem;
+            color: #ffdae0;
+            font-style: italic;
+            max-width: 80%;
+            margin-top: 15px;
+            min-height: 2rem;
+            z-index: 20;
+        }
+
+        /* Partículas (Rosas) */
         .particle { position: absolute; top: -50px; pointer-events: none; z-index: 5; animation: fall linear forwards; }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
 
         #hint { position: absolute; bottom: 30px; color: #666; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body onclick="startStory()">
 
     <div class="vane-title">VANE</div>
-    <div id="cat" class="cat-main">🐱</div>
+
+    <div id="cats-area" class="cats-stage">
+        <div id="cat-main-el" class="cat-main">🐱</div>
+        <div id="cats-hug-el" class="cats-hug">🫂🐱</div>
+    </div>
+    
     <div id="main-message"></div>
+    <div id="final-like-question">¿ME GUSTAS?</div>
+    <div id="shy-confession"></div>
 
     <div id="shy-box" class="shy-cat-box">
         <div id="shy-cat">🥺👉👈</div>
-        <div id="question">¿Pero no estás enojada?</div>
+        <div id="angry-question">¿Pero no estás enojada?</div>
     </div>
 
     <p id="hint">Toca la pantalla, Vane...</p>
 
     <script>
         const txtExtraño = "TE EXTRAÑO...";
+        const txtConfession = "Disculpa si te molesta ja pero tenia que decirlo y pues ya lo dije asi que nose que dices tu jaj";
         const msgElement = document.getElementById('main-message');
+        const confessElement = document.getElementById('shy-confession');
         let active = false;
+        let pInterval;
 
         function startStory() {
             if (active) return;
             active = true;
             document.getElementById('hint').style.display = 'none';
-            document.getElementById('cat').classList.add('bounce');
+            document.getElementById('cat-main-el').classList.add('bounce');
             
-            // Lluvia de rosas
-            setInterval(createParticle, 150);
+            pInterval = setInterval(createParticle, 150);
 
-            // Escribir mensaje
             let i = 0;
             let timer = setInterval(() => {
                 if (i < txtExtraño.length) {
@@ -103,25 +158,52 @@
         }
 
         function triggerShyCat() {
-            const box = document.getElementById('shy-box');
-            box.style.display = 'block';
+            const shyBox = document.getElementById('shy-box');
+            shyBox.style.display = 'block';
             
-            // Efecto de asomarse poco a poco
             setTimeout(() => {
-                box.classList.add('peek');
-                document.getElementById('cat').innerHTML = '😻';
+                shyBox.classList.add('peek');
+                document.getElementById('cat-main-el').innerHTML = '😻';
             }, 1000);
 
-            // Hacer que se esconda y salga si ella no hace nada
-            setInterval(() => {
-                box.classList.toggle('peek');
-            }, 4000);
+            // Después de 5 segundos de asomarse, vamos al abrazo final
+            setTimeout(triggerHug, 6000);
+        }
+
+        function triggerHug() {
+            // Esconder al asomadizo
+            document.getElementById('shy-box').classList.remove('peek');
+            setTimeout(() => {
+                document.getElementById('shy-box').style.display = 'none';
+                
+                // Transición del abrazo
+                document.getElementById('cat-main-el').style.display = 'none';
+                document.getElementById('cats-hug-el').style.display = 'block';
+                
+                // Mostrar pregunta final
+                document.getElementById('final-like-question').style.display = 'block';
+                
+                // Iniciar escritura tímida
+                typeConfession();
+            }, 2000); // Dar tiempo a que baje el gatito asomadizo
+        }
+
+        function typeConfession() {
+            let i = 0;
+            let timer = setInterval(() => {
+                if (i < txtConfession.length) {
+                    confessElement.innerHTML += txtConfession.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(timer);
+                }
+            }, 80); // Escritura más rápida pero aún lenta
         }
 
         function createParticle() {
             const p = document.createElement('div');
             p.classList.add('particle');
-            const types = ['🌹', '🌸', '💖', '✨', '🎈'];
+            const types = ['🌹', '🌸', '💖', '✨', '🎈', '🎁'];
             p.innerHTML = types[Math.floor(Math.random() * types.length)];
             p.style.left = Math.random() * 100 + 'vw';
             p.style.fontSize = (Math.random() * 25 + 15) + 'px';
