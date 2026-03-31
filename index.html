@@ -29,11 +29,10 @@
 
         #instructions { font-family: 'Special Elite', cursive; font-size: 1.8rem; color: var(--vane-pink); z-index: 400; padding: 20px; }
 
-        #camera-viewport { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; align-items: center; }
+        #camera-viewport { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; align-items: center; position: relative; }
 
-        /* VANE GIGANTE */
         .vane-hero {
-            font-size: 7rem; /* SUPER GRANDE */
+            font-size: 7rem;
             background: linear-gradient(to right, var(--vane-red), var(--vane-pink));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -51,6 +50,18 @@
 
         #emoji-reveal { font-size: 130px; display: none; flex-direction: column; align-items: center; z-index: 1001; }
         #emoji-subtext { font-size: 1.8rem; color: #ffd700; margin-top: 15px; font-style: italic; }
+
+        /* GATO REBOTÍN FINAL */
+        #bouncing-cat {
+            position: absolute; font-size: 100px; display: none; z-index: 2000;
+            filter: drop-shadow(0 0 15px white);
+        }
+        
+        #y-volo-text {
+            position: absolute; font-size: 4rem; color: var(--vane-pink);
+            display: none; z-index: 2001; text-transform: uppercase;
+            filter: drop-shadow(0 0 10px var(--vane-pink));
+        }
 
         .particle { position: absolute; top: -50px; pointer-events: none; animation: fall linear forwards; }
         @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
@@ -80,10 +91,10 @@
             <div class="cats-below">🫂🐱</div>
         </div>
 
-        <div class="dynamic-phrase" style="top: 10%; right: 5%;" id="f1">ADMIRO TU DISCIPLINA 💪</div>
-        <div class="dynamic-phrase" style="bottom: 15%; left: 5%;" id="f2">NADIE CHAMBEA COMO TÚ 🔥</div>
-        <div class="dynamic-phrase" style="top: 25%; left: 5%;" id="f3">REINA DE LOS TATTOOS 💉</div>
-        <div class="dynamic-phrase" style="bottom: 10%; right: 5%;" id="f4">UÑAS DE IMPACTO 💅✨</div>
+        <div class="dynamic-phrase" style="top: 10%; right: 5%;" id="f1">Admiro tu disciplina 💪</div>
+        <div class="dynamic-phrase" style="bottom: 15%; left: 5%;" id="f2">Nadie chambea como tú 🔥</div>
+        <div class="dynamic-phrase" style="top: 25%; left: 5%;" id="f3">Reina de los Tattoos 💉</div>
+        <div class="dynamic-phrase" style="bottom: 10%; right: 5%;" id="f4">Uñas de Impacto 💅✨</div>
     </div>
 
     <button class="cliche-btn" id="cliche-1" style="top:50%; left:50%; transform:translate(-50%, -50%);" onclick="clicheChase(2)">¿Quieres saber quién soy? (Cliché) AQUÍ</button>
@@ -94,6 +105,9 @@
         <div id="big-emoji"></div>
         <div id="emoji-subtext"></div>
     </div>
+    
+    <div id="bouncing-cat">🐈</div>
+    <div id="y-volo-text">¡Y VOLÓ! 🚀</div>
 
     <script>
         function nextStep(s) {
@@ -137,7 +151,7 @@
         function mainShow() {
             document.getElementById('pixar-intro').style.display='none';
             document.getElementById('main-show').style.display='flex';
-            setInterval(createParticle, 100);
+            window.chaosRain = setInterval(createParticle, 100);
 
             [1, 2, 3, 4].forEach(n => {
                 setTimeout(() => {
@@ -179,7 +193,11 @@
                     bigE.innerHTML = sequence[i].e;
                     sub.innerHTML = sequence[i].t;
                     i++;
-                } else { clearInterval(timer); }
+                } else { 
+                    clearInterval(timer);
+                    // Esperar un poco y activar el gato rebotín
+                    setTimeout(activateBouncingCat, 2500);
+                }
             }, 2000);
         }
 
@@ -193,6 +211,107 @@
             p.style.animationDuration = (Math.random() * 3 + 2) + 's';
             document.body.appendChild(p);
             setTimeout(() => p.remove(), 4000);
+        }
+        
+        // LÓGICA DEL GATO REBOTÍN (¡Y VOLÓ!)
+        function activateBouncingCat() {
+            // Limpiar todo lo anterior
+            document.getElementById('emoji-reveal').style.display = 'none';
+            document.getElementById('camera-viewport').style.display = 'none';
+            clearInterval(window.chaosRain);
+            
+            const cat = document.getElementById('bouncing-cat');
+            const voloText = document.getElementById('y-volo-text');
+            cat.style.display = 'block';
+            
+            // Posición inicial (centro)
+            let x = window.innerWidth / 2 - 50;
+            let y = window.innerHeight / 2 - 50;
+            // Velocidad y dirección (aleatoria pero rápida)
+            let xSpeed = (Math.random() > 0.5 ? 1 : -1) * (15 + Math.random() * 10);
+            let ySpeed = (Math.random() > 0.5 ? 1 : -1) * (15 + Math.random() * 10);
+            
+            let bounces = 0;
+            const maxBounces = 12; // Cuántas veces rebota antes de "volar"
+            
+            function animate() {
+                x += xSpeed;
+                y += ySpeed;
+                
+                // Rebote en paredes laterales
+                if (x + 100 > window.innerWidth || x < 0) {
+                    xSpeed = -xSpeed;
+                    bounces++;
+                    createImpactEffect(x, y);
+                }
+                // Rebote en techo y suelo
+                if (y + 100 > window.innerHeight || y < 0) {
+                    ySpeed = -ySpeed;
+                    bounces++;
+                    createImpactEffect(x, y);
+                }
+                
+                cat.style.left = x + 'px';
+                cat.style.top = y + 'px';
+                // Efecto de rotación loca
+                cat.style.transform = `rotate(${bounces * 90}deg)`;
+                
+                if (bounces < maxBounces) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // EL ÚLTIMO SALTO (SALIR VOLANDO)
+                    ySpeed = -30; // Directo hacia arriba
+                    xSpeed = (Math.random() > 0.5 ? 20 : -20); // Y un poco de lado
+                    
+                    // Mostrar texto "¡Y VOLÓ!" en el último impacto
+                    voloText.style.display = 'block';
+                    voloText.style.left = (window.innerWidth / 2 - 100) + 'px';
+                    voloText.style.top = (window.innerHeight / 2 - 50) + 'px';
+                    
+                    // Animación final de salida
+                    let finalY = y;
+                    let finalX = x;
+                    const finalTimer = setInterval(() => {
+                        finalY += ySpeed;
+                        finalX += xSpeed;
+                        cat.style.top = finalY + 'px';
+                        cat.style.left = finalX + 'px';
+                        cat.style.transform = `rotate(${finalY * 2}deg) scale(0.5)`;
+                        
+                        if (finalY < -150) {
+                            clearInterval(finalTimer);
+                            cat.style.display = 'none';
+                            // Dejar el texto unos segundos y luego fundir a negro final
+                            setTimeout(() => {
+                                document.body.style.transition = 'background-color 3s';
+                                document.body.style.backgroundColor = 'black';
+                                voloText.style.transition = 'opacity 2s';
+                                voloText.style.opacity = '0';
+                            }, 3000);
+                        }
+                    }, 20);
+                }
+            }
+            
+            animate();
+        }
+        
+        // Efecto visual al chocar con la pared
+        function createImpactEffect(x, y) {
+            const impact = document.createElement('div');
+            impact.innerHTML = '💥';
+            impact.style.position = 'absolute';
+            impact.style.fontSize = '40px';
+            impact.style.left = x + 'px';
+            impact.style.top = y + 'px';
+            impact.style.zIndex = '1999';
+            impact.style.transition = 'opacity 0.5s, transform 0.5s';
+            document.body.appendChild(impact);
+            setTimeout(() => {
+                impact.style.opacity = '0';
+                impact.style.transform = 'scale(2)';
+                setTimeout(() => impact.remove(), 500);
+            }, 10);
         }
     </script>
 </body>
