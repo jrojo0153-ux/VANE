@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vane: Cinematic Experience 🎬</title>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+    <title>Vane: Función Especial 🎬</title>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Special+Elite&display=swap" rel="stylesheet">
     <style>
         :root {
             --vane-red: #ff0000;
@@ -16,98 +16,121 @@
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: var(--bg-dark);
             color: white; font-family: 'Anton', sans-serif;
-            overflow: hidden; display: flex; justify-content: center; align-items: center;
+            overflow: hidden; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
         }
 
-        /* EFECTO CÁMARA (Movimiento sutil de video) */
-        .camera-layer {
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        /* ESTILO BOTONES TEATRO */
+        .theatre-btn {
+            padding: 20px 40px; font-size: 1.5rem; background: var(--vane-red);
+            border: 3px solid white; color: white; border-radius: 10px;
+            cursor: pointer; font-family: 'Anton'; box-shadow: 0 0 20px var(--vane-red);
+            transition: 0.3s; margin: 10px; z-index: 500;
+        }
+        .theatre-btn:hover { transform: scale(1.1); background: var(--vane-pink); }
+
+        /* INSTRUCCIONES TIPO MÁQUINA DE ESCRIBIR */
+        #instructions {
+            font-family: 'Special Elite', cursive; font-size: 1.8rem;
+            color: var(--vane-pink); display: none; z-index: 400;
+        }
+
+        /* CAPA DE CÁMARA (VIDEO) */
+        #camera-viewport {
+            display: none; width: 100%; height: 100%;
+            flex-direction: column; justify-content: center; align-items: center;
             animation: cameraShake 10s infinite ease-in-out;
         }
 
         @keyframes cameraShake {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            25% { transform: scale(1.02) rotate(0.5deg); }
-            75% { transform: scale(1.01) rotate(-0.5deg); }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02) rotate(0.5deg); }
         }
 
-        /* INTRO PIXAR CON FÍSICA */
-        #pixar-intro { display: flex; gap: 15px; font-size: 6rem; z-index: 100; }
-        .letter { display: inline-block; opacity: 0; transform: scale(0); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        #pixar-cat { 
-            position: absolute; font-size: 5rem; z-index: 101; display: none;
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.5);
-        }
+        /* PIXAR INTRO */
+        #pixar-intro { display: flex; gap: 15px; font-size: 6rem; position: relative; }
+        .letter { display: inline-block; opacity: 0; transform: scale(0); transition: 0.5s; }
+        #pixar-cat { position: absolute; font-size: 5rem; display: none; z-index: 101; transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.5); }
 
-        /* FRASES CON MOTION BLUR */
+        /* FRASES ESQUINAS */
         .dynamic-phrase {
-            position: absolute; padding: 20px; font-size: 1.4rem;
-            background: linear-gradient(90deg, rgba(255,0,0,0.5), rgba(255,105,180,0.5));
-            border-radius: 15px; opacity: 0; filter: blur(10px);
-            transition: all 0.8s ease-out; z-index: 50;
+            position: absolute; padding: 15px; font-size: 1.2rem;
+            background: rgba(255,0,0,0.4); border-radius: 10px;
+            opacity: 0; filter: blur(10px); transition: 0.8s; z-index: 50;
         }
-        .slide-in-right { transform: translateX(150%); }
-        .slide-in-left { transform: translateX(-150%); }
-        .active-phrase { opacity: 1; transform: translateX(0); filter: blur(0); }
+        .active-phrase { opacity: 1; filter: blur(0); transform: scale(1); }
 
-        /* GATITOS FINALES (Abrazo Animado) */
-        #main-content { display: none; flex-direction: column; align-items: center; z-index: 10; }
-        .cats-final { font-size: 130px; animation: heartBeat 1.5s infinite; filter: drop-shadow(0 0 20px var(--vane-pink)); }
-        
-        @keyframes heartBeat {
-            0% { transform: scale(1); }
-            15% { transform: scale(1.15); }
-            30% { transform: scale(1); }
-            45% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        /* LLUVIA DE OBJETOS */
+        /* LLUVIA */
         .particle { position: absolute; top: -50px; pointer-events: none; animation: fall linear forwards; }
-        @keyframes fall { to { transform: translateY(110vh) rotate(1080deg); } }
+        @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
 
-        #start-btn {
-            padding: 25px 50px; font-size: 1.8rem; background: var(--vane-red);
-            border: none; color: white; border-radius: 15px; cursor: pointer;
-            box-shadow: 0 0 30px var(--vane-red); font-family: 'Anton'; z-index: 200;
-        }
+        #final-msg { font-size: 1.6rem; color: #ffd700; max-width: 85%; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <button id="start-btn" onclick="startMovie()">REPRODUCIR VIDEO 🎬</button>
+    <div id="stage-1">
+        <button class="theatre-btn" onclick="nextStep(2)">HOLA VANE, DA CLICK AQUÍ 🎬</button>
+    </div>
+    <div id="stage-2" style="display:none;">
+        <button class="theatre-btn" onclick="nextStep(3)">¡NO! MEJOR AQUÍ 👇</button>
+    </div>
+    <div id="stage-3" style="display:none;">
+        <button class="theatre-btn" onclick="nextStep(4)">ESTE ES EL BUENO, AQUÍ 💎</button>
+    </div>
 
-    <div class="camera-layer" id="viewport">
+    <div id="instructions"></div>
+
+    <div id="camera-viewport">
         <div id="pixar-intro">
             <div id="pixar-cat">🐱</div>
-            <span class="letter">V</span>
-            <span class="letter">A</span>
-            <span class="letter">N</span>
-            <span class="letter">E</span>
+            <span class="letter">V</span><span class="letter">A</span><span class="letter">N</span><span class="letter">E</span>
         </div>
 
-        <div id="main-content">
-            <div class="cats-final">🫂🐱</div>
-            <h1 style="font-size: 4rem; letter-spacing: 10px; margin-top: 20px; background: linear-gradient(to right, red, pink); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">VANE</h1>
-            <p id="final-quote" style="font-size: 1.5rem; color: #ffd700; max-width: 80%;"></p>
+        <div id="main-show" style="display:none; flex-direction: column; align-items: center;">
+            <div style="font-size: 120px;">🫂🐱</div>
+            <h1 style="font-size: 4.5rem; margin: 10px; background: linear-gradient(to right, red, pink); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">VANE</h1>
+            <p id="final-msg"></p>
         </div>
 
-        <div class="dynamic-phrase slide-in-right" style="top: 15%; right: 5%;" id="f1">ADMIRO TU DISCIPLINA 💪</div>
-        <div class="dynamic-phrase slide-in-left" style="bottom: 20%; left: 5%;" id="f2">NADIE CHAMBEA COMO TÚ 🔥</div>
-        <div class="dynamic-phrase slide-in-right" style="top: 40%; left: 10%;" id="f3">REINA DE LOS TATTOOS 💉</div>
-        <div class="dynamic-phrase slide-in-left" style="bottom: 10%; right: 10%;" id="f4">UÑAS DE IMPACTO 💅✨</div>
+        <div class="dynamic-phrase" style="top: 10%; right: 5%;" id="f1">ADMIRO TU DISCIPLINA 💪</div>
+        <div class="dynamic-phrase" style="bottom: 15%; left: 5%;" id="f2">NADIE CHAMBEA COMO TÚ 🔥</div>
+        <div class="dynamic-phrase" style="top: 30%; left: 10%;" id="f3">REINA DE LOS TATTOOS 💉</div>
+        <div class="dynamic-phrase" style="bottom: 5%; right: 10%;" id="f4">UÑAS DE IMPACTO 💅✨</div>
     </div>
 
     <script>
-        const finalTxt = "DISCIPLINA EN EL GYM, ARTE EN LA PIEL. ¡ERES UNA CRACK! 💪💉🔥";
+        const inst = ["¡SILENCIO EN LA SALA!", "APAGA LAS LUCES...", "PREPARA TUS OJOS...", "¡QUE COMIENCE LA FUNCIÓN!"];
+        const finalTxt = "TU DISCIPLINA MARCA EL CUERPO, TU ARTE MARCA LA PIEL. ¡ERES LEYENDA! 💪💉🔥";
 
-        function startMovie() {
-            document.getElementById('start-btn').style.display = 'none';
-            runPixarAnimation();
+        function nextStep(step) {
+            document.getElementById(`stage-${step-1}`).style.display = 'none';
+            if (step <= 3) {
+                document.getElementById(`stage-${step}`).style.display = 'block';
+            } else {
+                startInstructions();
+            }
         }
 
-        function runPixarAnimation() {
+        function startInstructions() {
+            const instDiv = document.getElementById('instructions');
+            instDiv.style.display = 'block';
+            let i = 0;
+            
+            const interval = setInterval(() => {
+                if (i < inst.length) {
+                    instDiv.innerHTML = inst[i];
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    instDiv.style.display = 'none';
+                    startMovie();
+                }
+            }, 1800);
+        }
+
+        function startMovie() {
+            document.getElementById('camera-viewport').style.display = 'flex';
             const cat = document.getElementById('pixar-cat');
             const letters = document.querySelectorAll('.letter');
             cat.style.display = 'block';
@@ -115,50 +138,39 @@
             letters.forEach((l, i) => {
                 setTimeout(() => {
                     const rect = l.getBoundingClientRect();
-                    // El gato salta con parábola
                     cat.style.left = (rect.left - 10) + 'px';
                     cat.style.top = (rect.top - 100) + 'px';
-                    
                     setTimeout(() => {
                         l.style.opacity = '1';
-                        l.style.transform = 'scale(1.2)';
-                        setTimeout(() => l.style.transform = 'scale(1)', 200);
-                        cat.style.top = (rect.top - 50) + 'px'; // Cae sobre la letra
+                        l.style.transform = 'scale(1)';
+                        cat.style.top = (rect.top - 50) + 'px';
                     }, 300);
                 }, i * 800);
             });
 
-            setTimeout(showMainShow, letters.length * 850 + 500);
+            setTimeout(showShow, letters.length * 900);
         }
 
-        function showMainShow() {
+        function showShow() {
             document.getElementById('pixar-intro').style.display = 'none';
-            document.getElementById('main-content').style.display = 'flex';
-            
-            // Lluvia masiva
+            document.getElementById('main-show').style.display = 'flex';
             setInterval(createParticle, 100);
 
-            // Secuencia de frases con "Motion Blur"
-            const phrases = ['f1', 'f2', 'f3', 'f4'];
-            phrases.forEach((id, i) => {
+            // Frases
+            ['f1', 'f2', 'f3', 'f4'].forEach((id, i) => {
                 setTimeout(() => {
-                    const el = document.getElementById(id);
-                    el.classList.add('active-phrase');
-                    setTimeout(() => {
-                        el.style.opacity = '0';
-                        el.style.transform = 'scale(1.5)';
-                    }, 3000);
+                    document.getElementById(id).classList.add('active-phrase');
+                    setTimeout(() => document.getElementById(id).style.opacity = '0', 3000);
                 }, i * 2000);
             });
 
-            // Texto final
+            // Mensaje final
             setTimeout(() => {
-                let i = 0;
-                const target = document.getElementById('final-quote');
+                let j = 0;
                 const timer = setInterval(() => {
-                    if (i < finalTxt.length) {
-                        target.innerHTML += finalTxt.charAt(i);
-                        i++;
+                    if (j < finalTxt.length) {
+                        document.getElementById('final-msg').innerHTML += finalTxt.charAt(j);
+                        j++;
                     } else { clearInterval(timer); }
                 }, 70);
             }, 8000);
@@ -167,13 +179,13 @@
         function createParticle() {
             const p = document.createElement('div');
             p.className = 'particle';
-            const items = ['🏋️‍♀️', '💉', '💅', '🔥', '✨', '💖', '💀', '🎈', '🎊'];
+            const items = ['🏋️‍♀️', '💉', '💅', '🔥', '✨', '💖', '👟', '🎊', '🎈'];
             p.innerHTML = items[Math.floor(Math.random() * items.length)];
             p.style.left = Math.random() * 100 + 'vw';
-            p.style.fontSize = (Math.random() * 30 + 20) + 'px';
+            p.style.fontSize = (Math.random() * 25 + 15) + 'px';
             p.style.animationDuration = (Math.random() * 3 + 2) + 's';
             document.body.appendChild(p);
-            setTimeout(() => p.remove(), 5000);
+            setTimeout(() => p.remove(), 4000);
         }
     </script>
 </body>
