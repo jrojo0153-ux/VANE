@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vane: The Movie 🎬</title>
+    <title>Vane: The Elite Edition 👑</title>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Black+Ops+One&display=swap" rel="stylesheet">
     <style>
         :root {
             --vane-red: #ff0000;
             --vane-pink: #ff69b4;
             --bg-dark: #000;
+            --gold: #ffd700;
         }
 
         body, html {
@@ -19,61 +20,65 @@
             overflow: hidden; display: flex; justify-content: center; align-items: center;
         }
 
-        /* FONDO DE TEXTOS DINÁMICOS (Reconocimiento) */
-        .bg-text-container {
+        /* CAPA DE FRASES DINÁMICAS (Esquinas y Flotantes) */
+        .phrase-overlay {
             position: absolute; width: 100%; height: 100%;
-            z-index: 1; opacity: 0.15; pointer-events: none;
-            overflow: hidden; display: none;
-        }
-        .scrolling-text {
-            position: absolute; font-size: 2rem; white-space: nowrap;
-            animation: slideText 15s linear infinite; text-transform: uppercase;
-        }
-        @keyframes slideText {
-            from { transform: translateX(100%); }
-            to { transform: translateX(-100%); }
+            pointer-events: none; z-index: 2;
         }
 
+        .dynamic-phrase {
+            position: absolute; padding: 15px 25px;
+            background: rgba(255, 0, 85, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--vane-pink);
+            border-radius: 50px;
+            font-size: 1.1rem; text-transform: uppercase;
+            opacity: 0; transform: scale(0.5);
+            transition: all 1s ease-in-out;
+            box-shadow: 0 0 15px var(--vane-pink);
+        }
+
+        /* Estilos específicos para las posiciones */
+        .p-top-right { top: 10%; right: 5%; border-radius: 0 0 0 50px; }
+        .p-bottom-left { bottom: 15%; left: 5%; border-radius: 0 50px 0 0; }
+        .p-circle { 
+            width: 120px; height: 120px; display: flex; align-items: center; 
+            justify-content: center; border-radius: 50%; text-align: center;
+            top: 25%; left: 10%; font-size: 0.9rem;
+        }
+        .p-gradient {
+            background: linear-gradient(90deg, transparent, var(--vane-red), transparent);
+            border: none; box-shadow: none; bottom: 5%; width: 100%; text-align: center;
+        }
+
+        /* CLASES DE ANIMACIÓN */
+        .show-phrase { opacity: 1; transform: scale(1); }
+        .fade-out { opacity: 0; transform: scale(1.2); filter: blur(10px); }
+
         /* INTRO PIXAR STYLE */
-        #pixar-intro {
-            display: flex; gap: 10px; font-size: 6rem; z-index: 100;
-        }
+        #pixar-intro { display: flex; gap: 10px; font-size: 6rem; z-index: 100; }
         .letter { display: inline-block; opacity: 0; transform: translateY(50px); }
-        #pixar-cat { 
-            position: absolute; font-size: 4rem; 
-            display: none; z-index: 101; 
-        }
+        #pixar-cat { position: absolute; font-size: 4rem; display: none; z-index: 101; }
 
         /* CONTENIDO PRINCIPAL */
         #main-content { display: none; flex-direction: column; align-items: center; z-index: 10; text-align: center; }
-
         .vane-heavy {
             font-size: 5.5rem; background: linear-gradient(45deg, var(--vane-red), var(--vane-pink));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             letter-spacing: 15px; filter: drop-shadow(0 0 30px rgba(255,0,85,0.8));
-            margin-bottom: 20px; animation: glitch 2s infinite;
+            margin-bottom: 20px;
         }
 
-        /* GATITO ASOMADIZO 👉👈 🥹 */
-        .shy-box {
-            position: absolute; bottom: -200px; width: 100%;
-            transition: bottom 2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .shy-box.peek { bottom: 40px; }
-        .emoji-shy { font-size: 70px; line-height: 1; }
-
-        /* PARTÍCULAS */
+        /* PARTÍCULAS CHAOS */
         .particle { position: absolute; top: -50px; z-index: 5; animation: fall linear forwards; }
         @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
-
-        /* MENSAJES */
-        #final-msg { font-size: 1.8rem; color: #ffd700; max-width: 80%; text-transform: uppercase; margin-top: 20px; }
 
         #start-btn {
             padding: 20px 40px; font-size: 1.5rem; background: var(--vane-red);
             border: none; color: white; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 0 20px var(--vane-red); font-family: 'Anton';
+            box-shadow: 0 0 20px var(--vane-red); font-family: 'Anton'; transition: 0.3s;
         }
+        #start-btn:hover { transform: scale(1.1); background: var(--vane-pink); }
     </style>
 </head>
 <body>
@@ -88,23 +93,22 @@
         <span class="letter">E</span>
     </div>
 
-    <div class="bg-text-container" id="bg-texts"></div>
+    <div class="phrase-overlay" id="phrases-layer">
+        <div class="dynamic-phrase p-top-right" id="p1">Admiro tu disciplina 💪</div>
+        <div class="dynamic-phrase p-bottom-left" id="p2">Nadie chambea como tú 🔥</div>
+        <div class="dynamic-phrase p-circle" id="p3">ARTE EN<br>LA PIEL 💉</div>
+        <div class="dynamic-phrase p-gradient" id="p4">ERES UNA CRACK, VANE 💅✨</div>
+    </div>
 
     <div id="main-content">
         <div class="vane-heavy">VANE</div>
         <div id="hug-scene" style="font-size: 120px; filter: drop-shadow(0 0 20px white);">🫂🐱</div>
-        <div id="final-msg"></div>
-    </div>
-
-    <div id="shy-box-el" class="shy-box">
-        <div class="emoji-shy">👉👈<br>🥹</div>
-        <div style="font-size: 1.5rem;">¿Pero no estás enojada?</div>
+        <div style="font-size: 1.5rem; color: var(--gold); margin-top: 30px; letter-spacing: 2px;">
+            TU ESFUERZO TIENE RECOMPENSA
+        </div>
     </div>
 
     <script>
-        const words = ["LA MÁS TRABAJADORA", "REINA DEL GYM", "ARTISTA DEL TATUAJE", "DISCIPLINA PURA", "IMPARABLE", "CRACK"];
-        const finalQuote = "TU DISCIPLINA MARCA EL CUERPO, TU ARTE MARCA LA PIEL. ¡ERES LEYENDA! 💪💉💅🔥";
-
         function runPixarIntro() {
             document.getElementById('start-btn').style.display = 'none';
             const cat = document.getElementById('pixar-cat');
@@ -114,12 +118,9 @@
             let delay = 0;
             letters.forEach((l, i) => {
                 setTimeout(() => {
-                    // Animación del gato saltando sobre la letra
                     const rect = l.getBoundingClientRect();
                     cat.style.left = (rect.left - 10) + 'px';
                     cat.style.top = (rect.top - 80) + 'px';
-                    
-                    // La letra aparece cuando el gato cae
                     l.style.opacity = '1';
                     l.style.transform = 'translateY(0)';
                     l.style.transition = 'all 0.3s ease';
@@ -133,42 +134,39 @@
         function startMainShow() {
             document.getElementById('pixar-intro').style.display = 'none';
             document.getElementById('main-content').style.display = 'flex';
-            document.getElementById('bg-texts').style.display = 'block';
             
-            // Iniciar Fondo de textos
-            initBackgroundTexts();
-            
-            // Iniciar Lluvia (Confeti, Pesas, Tatuajes, Uñas)
-            setInterval(createChaosParticle, 100);
+            // Lluvia Chaos (Pesas, Uñas, Tatuajes)
+            setInterval(createChaosParticle, 120);
 
-            // Mostrar Gatito Asomadizo
-            setTimeout(() => {
-                document.getElementById('shy-box-el').classList.add('peek');
-            }, 2000);
-
-            // Final: Frase Maestra
-            setTimeout(() => {
-                document.getElementById('shy-box-el').classList.remove('peek');
-                typeFinalMsg();
-            }, 7000);
+            // Secuencia de Frases en las esquinas con transiciones
+            runPhraseSequence();
         }
 
-        function initBackgroundTexts() {
-            const container = document.getElementById('bg-texts');
-            words.forEach((w, i) => {
-                const div = document.createElement('div');
-                div.className = 'scrolling-text';
-                div.innerHTML = w;
-                div.style.top = (i * 15) + '%';
-                div.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                container.appendChild(div);
+        function runPhraseSequence() {
+            const sequence = [
+                { id: 'p1', time: 500 },
+                { id: 'p2', time: 2500 },
+                { id: 'p3', time: 4500 },
+                { id: 'p4', time: 6500 }
+            ];
+
+            sequence.forEach(item => {
+                const el = document.getElementById(item.id);
+                // Aparecer
+                setTimeout(() => {
+                    el.classList.add('show-phrase');
+                }, item.time);
+                
+                // Desaparecer con degradado/blur
+                setTimeout(() => {
+                    el.classList.add('fade-out');
+                }, item.time + 4000);
             });
         }
 
         function createChaosParticle() {
             const p = document.createElement('div');
             p.className = 'particle';
-            // MEZCLA: Confeti, Pesas, Tatuajes, Uñas, Brillos
             const types = ['🎊', '🏋️‍♀️', '💉', '💅', '🔥', '✨', '💖', '👟', '💀'];
             p.innerHTML = types[Math.floor(Math.random() * types.length)];
             p.style.left = Math.random() * 100 + 'vw';
@@ -176,17 +174,6 @@
             p.style.animationDuration = (Math.random() * 3 + 2) + 's';
             document.body.appendChild(p);
             setTimeout(() => p.remove(), 5000);
-        }
-
-        function typeFinalMsg() {
-            const el = document.getElementById('final-msg');
-            let i = 0;
-            const timer = setInterval(() => {
-                if (i < finalQuote.length) {
-                    el.innerHTML += finalQuote.charAt(i);
-                    i++;
-                } else { clearInterval(timer); }
-            }, 80);
         }
     </script>
 </body>
