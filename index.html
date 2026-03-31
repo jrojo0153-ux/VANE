@@ -3,212 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Para Vane</title>
+    <title>Para Vane ❤️</title>
     <style>
         :root {
-            --bg-color: #050509;
-            --neon-color: #ff2d75;
-            --text-color: #fff;
-            --folder-color: #ffd700;
+            --vane-color: linear-gradient(45deg, #ff0000, #ff69b4);
+            --bg-dark: #000;
         }
 
         body, html {
-            height: 100%;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: var(--bg-color);
-            font-family: 'Poppins', sans-serif;
-            overflow: hidden;
-            perspective: 1000px; /* Necesario para el efecto 3D */
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg-dark);
+            color: white; font-family: 'Arial Rounded MT Bold', sans-serif;
+            overflow: hidden; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
         }
 
-        /* Estilo del Nombre VANE - Neón */
-        .vane-header {
-            position: absolute;
-            top: 20px;
-            text-align: center;
-            width: 100%;
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--text-color);
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            text-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color), 0 0 40px var(--neon-color);
-            animation: flicker 1.5s infinite alternate;
+        /* Nombre VANE Neón */
+        .vane-title {
+            font-size: 4.5rem; font-weight: 900;
+            background: var(--vane-color);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase; letter-spacing: 10px;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 85, 0.8));
+            animation: pulse 1.5s infinite ease-in-out;
+            z-index: 20; margin-bottom: 50px;
         }
 
-        @keyframes flicker {
-            0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color); }
-            50% { opacity: 0.8; text-shadow: 0 0 5px var(--neon-color); }
-            80% { opacity: 1; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        /* Gatito Principal */
+        .cat-main { font-size: 100px; z-index: 15; filter: drop-shadow(0 0 10px white); }
+        .bounce { animation: bounce 0.6s infinite alternate; }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-30px); } }
+
+        /* Mensaje Central */
+        #main-message {
+            font-size: 2.2rem; min-height: 3rem; color: #fff;
+            text-shadow: 0 0 15px #ff69b4; font-weight: bold; z-index: 20;
         }
 
-        /* Contenedor Principal (Caja Mágica) */
-        .box-container {
-            width: 250px;
-            height: 200px;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
+        /* EL GATITO TÍMIDO (Se asoma desde abajo) */
+        .shy-cat-box {
+            position: absolute; bottom: -100px; /* Escondido */
+            width: 100%; transition: bottom 2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 30; display: none;
         }
 
-        /* La Tapa (Frontal) */
-        .box-lid {
-            width: 100%;
-            height: 100%;
-            background-color: var(--folder-color);
-            border-radius: 10px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
-            z-index: 2;
-            backface-visibility: hidden;
-            transition: transform 0.8s, opacity 0.5s;
-        }
+        .shy-cat-box.peek { bottom: 10px; /* Sale un poquito */ }
 
-        .box-lid::after {
-            content: 'Toca aquí';
-            color: #333;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-        }
+        #shy-cat { font-size: 80px; cursor: pointer; }
+        #question { font-size: 1.5rem; color: #ffdae0; text-shadow: 0 0 5px #ff0000; font-weight: bold; }
 
-        /* El Contenido Oculto */
-        .box-content {
-            width: 90%;
-            height: 80%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            position: absolute;
-            top: 10%;
-            left: 5%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transform: translateZ(-50px);
-            transition: opacity 0.5s 0.3s, transform 0.8s 0.2s;
-            padding: 10px;
-            box-sizing: border-box;
-            backdrop-filter: blur(5px);
-        }
+        /* Partículas */
+        .particle { position: absolute; top: -50px; pointer-events: none; z-index: 5; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
 
-        /* El Mensaje con efecto de escritura */
-        .final-message {
-            color: var(--text-color);
-            font-size: 1.5rem;
-            text-align: center;
-            margin: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            width: 0;
-            border-right: 3px solid var(--neon-color);
-        }
-
-        .heart-icon {
-            color: var(--neon-color);
-            font-size: 2rem;
-            margin-top: 10px;
-            opacity: 0;
-            transform: scale(0);
-            transition: transform 0.5s 1s, opacity 0.5s 1s;
-        }
-
-        /* ESTADOS ABIERTOS */
-        .box-container.open .box-lid {
-            transform: rotateY(-180deg);
-            opacity: 0;
-        }
-
-        .box-container.open .box-content {
-            opacity: 1;
-            transform: translateZ(0px);
-        }
-
-        .box-container.open .final-message {
-            animation: typing 1.5s steps(12) forwards 0.8s;
-        }
-
-        .box-container.open .heart-icon {
-            opacity: 1;
-            transform: scale(1) rotate(15deg);
-        }
-
-        /* Animaciones */
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; border-color: transparent; }
-        }
-
-        /* Partículas de Fondo */
-        .particle {
-            position: absolute;
-            color: var(--neon-color);
-            font-size: 1rem;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .box-container.open ~ .particle {
-            animation: floatParticle 3s ease-out forwards;
-        }
-
-        @keyframes floatParticle {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-200px) translateX(20px) scale(0.5); opacity: 0; }
-        }
-
+        #hint { position: absolute; bottom: 30px; color: #666; }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body onclick="startStory()">
 
-    <div class="vane-header">Vane</div>
+    <div class="vane-title">VANE</div>
+    <div id="cat" class="cat-main">🐱</div>
+    <div id="main-message"></div>
 
-    <div class="box-container" onclick="openMagicBox(this)">
-        <div class="box-content">
-            <h1 class="final-message">Te extraño</h1>
-            <div class="heart-icon">♥</div>
-        </div>
-        <div class="box-lid"></div>
+    <div id="shy-box" class="shy-cat-box">
+        <div id="shy-cat">🥺👉👈</div>
+        <div id="question">¿Pero no estás enojada?</div>
     </div>
 
-    <div id="particle-container"></div>
+    <p id="hint">Toca la pantalla, Vane...</p>
 
     <script>
-        function openMagicBox(element) {
-            element.classList.add('open');
-            createParticles();
+        const txtExtraño = "TE EXTRAÑO...";
+        const msgElement = document.getElementById('main-message');
+        let active = false;
+
+        function startStory() {
+            if (active) return;
+            active = true;
+            document.getElementById('hint').style.display = 'none';
+            document.getElementById('cat').classList.add('bounce');
+            
+            // Lluvia de rosas
+            setInterval(createParticle, 150);
+
+            // Escribir mensaje
+            let i = 0;
+            let timer = setInterval(() => {
+                if (i < txtExtraño.length) {
+                    msgElement.innerHTML += txtExtraño.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(timer);
+                    triggerShyCat();
+                }
+            }, 150);
         }
 
-        function createParticles() {
-            const container = document.getElementById('particle-container');
-            if (document.querySelector('.particle')) return; // Solo una vez
+        function triggerShyCat() {
+            const box = document.getElementById('shy-box');
+            box.style.display = 'block';
+            
+            // Efecto de asomarse poco a poco
+            setTimeout(() => {
+                box.classList.add('peek');
+                document.getElementById('cat').innerHTML = '😻';
+            }, 1000);
 
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                particle.innerHTML = i % 2 === 0 ? '♥' : '✦'; // Alternar corazones y destellos
-                
-                // Posición aleatoria cerca de la caja
-                particle.style.left = (Math.random() * 80 + 10) + 'vw';
-                particle.style.top = (Math.random() * 50 + 30) + 'vh';
-                
-                // Retraso aleatorio para la animación
-                particle.style.animationDelay = (Math.random() * 1) + 's';
-                
-                container.appendChild(particle);
-            }
+            // Hacer que se esconda y salga si ella no hace nada
+            setInterval(() => {
+                box.classList.toggle('peek');
+            }, 4000);
+        }
+
+        function createParticle() {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            const types = ['🌹', '🌸', '💖', '✨', '🎈'];
+            p.innerHTML = types[Math.floor(Math.random() * types.length)];
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.fontSize = (Math.random() * 25 + 15) + 'px';
+            p.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            p.style.opacity = Math.random();
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 5000);
         }
     </script>
 </body>
